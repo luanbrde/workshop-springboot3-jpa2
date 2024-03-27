@@ -28,6 +28,21 @@ public class Order implements Serializable {
 	private Long id;
 	private Instant moment;
 	private Integer orderStatus;
+	
+	
+	@OneToMany(mappedBy = "id.order")
+	private Set<OrderItem> items = new HashSet<>();
+	
+	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+	private Payment payment;
+
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
 
 	@ManyToOne
 	@JoinColumn(name = "client_id")
@@ -71,6 +86,15 @@ public class Order implements Serializable {
 	public OrderStatus getOrderStatus() {
 		return OrderStatus.valueOf( orderStatus);
 	}
+	
+	public Double getTotal() {
+		Double sum = 0.0;
+		for(OrderItem x : items) {
+			sum += x.getSubTotal();
+		}
+		return sum;
+		
+	}
 
 	public void setOrderStatus(OrderStatus orderStatus) {
 		if(orderStatus!=null) {
@@ -78,6 +102,13 @@ public class Order implements Serializable {
 		}
 	}
 
+	
+	public Set<OrderItem> GetItems(){
+		return items;
+	}
+	
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -102,4 +133,7 @@ public class Order implements Serializable {
 			return false;
 		return true;
 	}
+	
+	
+	
 }
